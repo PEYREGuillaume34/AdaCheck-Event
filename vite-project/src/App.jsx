@@ -1,20 +1,21 @@
-import { useEffect, useState } from 'react'
-import './App.css'
+import { useState, useEffect } from "react";
+import "./App.css";
 import Cards from "./components/Cards"
 
-  function App() {
+function App() {
 
 
 
-    return (
-      <>
-        <div>
-          <Cards />
-        </div>
 
-      </>
-    )
-  }
 
-export default App
+  return (
+    <>
+  <div>
+    <Cards />
+   
+  </div>
+    </>
+  );
+}
 
+export default App;
