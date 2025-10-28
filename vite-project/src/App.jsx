@@ -3,7 +3,8 @@ import "./App.css";
 import Cards from "./components/Cards"
 
 function App() {
-
+    const [offset, setOffset] = useState(0);
+    const [limit, setLimit] =  useState(5);
 
 
 
@@ -11,7 +12,8 @@ function App() {
   return (
     <>
   <div>
-    <Cards />
+    <Cards onClickLimit={limit} onClickOffset={offset}/>
+    
    
   </div>
     </>
