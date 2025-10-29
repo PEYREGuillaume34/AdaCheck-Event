@@ -3,8 +3,8 @@ import "./App.css";
 import Cards from "./components/Cards"
 
 function App() {
-    const [offset, setOffset] = useState(0);
-    const [limit, setLimit] =  useState(5);
+    const [offset, setOffset] = useState(10);
+    const [limit, setLimit] =  useState(7);
 
 
 
