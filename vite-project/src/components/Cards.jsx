@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Button from "./Button";
 
 // composant qui recupere  les infos limit et offset
 export default function Cards({ offset, limit }) {
@@ -95,14 +96,12 @@ export default function Cards({ offset, limit }) {
             </div >
 
             <br></br>
-          </div >
-        ))
-        }
-      </div >
+          </div>
+
+        ))}
+      </div>
     </>
   );
+
 }
-
-
-
 
