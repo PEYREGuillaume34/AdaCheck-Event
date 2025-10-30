@@ -1,18 +1,14 @@
 import { useState, useEffect } from "react";
-import Button from "./Button";
 
 // composant qui recupere  les infos limit et offset
 export default function Cards({ offset, limit, query = "", onCountChange }) {
-  
+
   const [allCards, setAllCards] = useState([]); // toutes les cartes
   const [filteredCards, setFilteredCards] = useState([]); // après recherche
-  // const [expanded, setExpanded] = useState({});
-  // const [card, setCards] = useState(undefined);
-    const [state, setState] = useState(false);
   const [statesId, setStatesId] = useState([]);
-  const [seeButton, setSeeButton] = useState(false);
+  
 
-    const noImg = "https://c.tenor.com/51xvC35-fDEAAAAd/tenor.gif";
+  const noImg = "https://c.tenor.com/51xvC35-fDEAAAAd/tenor.gif";
 
 
   // 🔹 Charger toutes les données une seule fois
@@ -23,11 +19,11 @@ export default function Cards({ offset, limit, query = "", onCountChange }) {
       );
       const data = await response.json();
       setAllCards(data.results || []);
-     
-      
+
+
     } catch (error) {
       console.error("Erreur lors du chargement des données :", error);
-      
+
       setAllCards([]);
     }
   };
@@ -37,16 +33,16 @@ export default function Cards({ offset, limit, query = "", onCountChange }) {
     loadData();
   }, []); //auparavant offset,limit
 
-    // useEffect ecoute card
+  // useEffect ecoute card
   // a chaque modif statesId est rempli avec id des cartes et status à false
   useEffect(() => {
     if (allCards) {
-      const allStates = allCards.map(el => ({ id: el.event_id, status: state }));
+      const allStates = allCards.map(el => ({ id: el.event_id, status: false }));
       setStatesId(allStates);
     }
   }, [allCards]);
 
-    // 🔹 Filtrer selon la query (insensible à la casse)
+  // 🔹 Filtrer selon la query (insensible à la casse)
   useEffect(() => {
     let results = allCards;
 
@@ -68,7 +64,7 @@ export default function Cards({ offset, limit, query = "", onCountChange }) {
   // 🔹 Pagination sur les résultats filtrés
   const pagedCards = filteredCards.slice(offset, offset + limit);
 
-    // ici l'objectif est de changer le status d'une carte au click en fonction de son id
+  // ici l'objectif est de changer le status d'une carte au click en fonction de son id
   function toggle(id) {
     setStatesId(prev =>
       prev.map(obj =>
@@ -89,13 +85,10 @@ export default function Cards({ offset, limit, query = "", onCountChange }) {
     return found ? found.status : false;
   }
 
-  // fonction qui inverse ! la valeur de expanded (true or false)
-  function toggle() {
-    setExpanded(!expanded);
-  }
+ 
 
   // ... tant que la data n'est pas récupérée
- if (!allCards.length) return <div>Loading...</div>;
+  if (!allCards.length) return <div>Loading...</div>;
 
   return (
     <div>
@@ -115,24 +108,24 @@ export default function Cards({ offset, limit, query = "", onCountChange }) {
               {el.title}
             </h2>
 
-              <p>{el.event_id}</p>
+            {/* <p>{el.event_id}</p> */}
 
-              {/* carte depliée ou pas */}
-              {returnState(el.event_id) ? <div dangerouslySetInnerHTML={{ __html: el.description }} ></div> : <p>{el.lead_text}</p>}
+            {/* carte depliée ou pas */}
+            {returnState(el.event_id) ? <div dangerouslySetInnerHTML={{ __html: el.description }} ></div> : <p>{el.lead_text}</p>}
 
-              <button className="m-5" onClick={() => toggle(el.event_id)}> {returnState(el.event_id) ? 'See Less' : 'See More'} </button>
+            <button className="m-5" onClick={() => toggle(el.event_id)}> {returnState(el.event_id) ? 'See Less' : 'See More'} </button>
 
-            </div >
+          </div >
 
-            <br></br>
-          </div>
-        
+          <br></br>
+        </div>
+
       ))}
 
       {pagedCards.length === 0 && (
         <p className="text-center text-gray-500 mt-4">Aucun résultat trouvé.</p>
       )}
     </div>
-    
+
   );
 }
