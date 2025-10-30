@@ -1,74 +1,104 @@
 import { useState, useEffect } from "react";
-import Button from "./Button";
 
-// composant qui recupere  les infos limit et offset
-export default function Cards({ offset, limit }) {
-
-  const [card, setCards] = useState(undefined);
+export default function Cards({ offset, limit, query = "", onCountChange }) {
+  const [allCards, setAllCards] = useState([]); // toutes les cartes
+  const [filteredCards, setFilteredCards] = useState([]); // après recherche
   const [expanded, setExpanded] = useState({});
+  const noImg = "https://c.tenor.com/51xvC35-fDEAAAAd/tenor.gif";
 
-  const noImg = 'https://c.tenor.com/51xvC35-fDEAAAAd/tenor.gif'
-
-  // fonction qui recupere la data
+  // 🔹 Charger toutes les données une seule fois
   const loadData = async () => {
-    // ici limit et offset sont injectée dans l'appel d'API
-    const response = await fetch(
-      `https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/que-faire-a-paris-/records?offset=${offset}&limit=${limit}`
-    );
-    const data = await response.json();
-    setCards(data.results);
+    try {
+      const response = await fetch(
+        "https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/que-faire-a-paris-/records?limit=90"
+      );
+      const data = await response.json();
+      setAllCards(data.results || []);
+    } catch (error) {
+      console.error("Erreur lors du chargement des données :", error);
+      setAllCards([]);
+    }
   };
 
-  // use effect ecoute 'offset' et 'limit'
-  // dès qu'ils sont modifiés il relance 'loadData'
-  useEffect(() => { loadData() }, [offset, limit]);
+  // 🔹 Charger les données au montage
+  useEffect(() => {
+    loadData();
+  }, []);
 
-  // fonction qui inverse ! la valeur de expanded (true or false)
-  function toggle() {
-    setExpanded(!expanded);
+  // 🔹 Filtrer selon la query (insensible à la casse)
+  useEffect(() => {
+    let results = allCards;
+
+    if (query) {
+      const q = query.toLowerCase();
+      results = allCards.filter(
+        (el) =>
+          el.title?.toLowerCase().includes(q) ||
+          el.lead_text?.toLowerCase().includes(q)
+      );
+    }
+
+    setFilteredCards(results);
+
+    // ✅ notifier le parent du nombre total filtré
+    if (onCountChange) onCountChange(results.length);
+  }, [allCards, query]);
+
+  // 🔹 Pagination sur les résultats filtrés
+  const pagedCards = filteredCards.slice(offset, offset + limit);
+
+  // 🔹 Gestion du bouton "Voir plus"
+  function toggle(id) {
+    setExpanded((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
   }
 
-  // ... tant que la data n'est pas récupérée
-  if (card === undefined) {
-    return <div>Loading...</div>;
-  }
+  // 🔹 Loading
+  if (!allCards.length) return <div>Loading...</div>;
 
+  // 🔹 Rendu
   return (
-    <>
-      <div>
-        {/*on map sur la data et on affiche systematiquement tels et tels elements par carte*/}
-        {card.map((el) => (
+    <div>
+      {pagedCards.map((el) => (
+        <div
+          className="flex m-2 border rounded-xl gap-4 p-2 items-start"
+          key={el.event_id}
+        >
+          <img
+            className="m-2 max-h-40 w-40 object-cover rounded-xl"
+            src={el.cover_url || noImg}
+            alt={el.title}
+          />
 
-          // ici on donne une id a la div c'est celle de l'annonce sur l'API
-          <div className="flex m-2 border rounded-xl gap-10 p-1" key={el.event_id}>
+          <div className="flex-1">
+            <h2 className="m-2 inline-block w-full bg-blue-500 text-white rounded-xl px-2 py-1">
+              {el.title}
+            </h2>
 
-            {/* ici on affiche l'image si il y en a une sinon une image par default */}
-            {el.cover_url ? <img className="m-2 start-block max-h-100 max-w-100 rounded-xl" src={el.cover_url}></img> : <img className="m-2 start-block max-h-100 max-w-100 rounded-xl" src={noImg} />}
+            {expanded[el.event_id] ? (
+              <div
+                className="m-2 text-sm"
+                dangerouslySetInnerHTML={{ __html: el.description }}
+              />
+            ) : (
+              <p className="m-2 text-sm">{el.lead_text}</p>
+            )}
 
-            {/* affichage du titre*/}
-            <div >
-              <h2 className="m-2 inline-block  w-100 bg-blue-500 text-white rounded-xl">
-                {el.title}
-              </h2>
-
-              {/* <p>{el.event_id}</p> */}
-
-              {/* carte depliée ou pas */}
-              {expanded ? <div dangerouslySetInnerHTML={{ __html: el.description }}></div> : <p>{el.lead_text}</p>}
-
-              <button onClick={toggle}>
-                {expanded ? "See less" : "See more"}
-              </button>
-
-            </div>
-
-            <br></br>
+            <button
+              onClick={() => toggle(el.event_id)}
+              className="text-blue-600 hover:underline"
+            >
+              {expanded[el.event_id] ? "Voir moins" : "Voir plus"}
+            </button>
           </div>
+        </div>
+      ))}
 
-        ))}
-      </div>
-    </>
+      {pagedCards.length === 0 && (
+        <p className="text-center text-gray-500 mt-4">Aucun résultat trouvé.</p>
+      )}
+    </div>
   );
-
 }
-
