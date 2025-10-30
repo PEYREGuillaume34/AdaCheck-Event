@@ -4,8 +4,11 @@ import { useState, useEffect } from "react";
 export default function Cards({ offset, limit }) {
 
   const [card, setCard] = useState(undefined);
-  const [state, setState] = useState(false);
+  
+  const [cardState, setCardState] = useState(false);
+ 
   const [statesId, setStatesId] = useState([]);
+  
   const [seeButton, setSeeButton] = useState(false);
 
   const noImg = 'https://c.tenor.com/51xvC35-fDEAAAAd/tenor.gif'
@@ -30,7 +33,7 @@ export default function Cards({ offset, limit }) {
   // a chaque modif statesId est rempli avec id des cartes et status à false
   useEffect(() => {
     if (card) {
-      const allStates = card.map(el => ({ id: el.event_id, status: state }));
+      const allStates = card.map(el => ({ id: el.event_id, status: cardState }));
       setStatesId(allStates);
     }
   }, [card]);
@@ -40,9 +43,8 @@ export default function Cards({ offset, limit }) {
   function toggle(id) {
     setStatesId(prev =>
       prev.map(obj =>
-        obj.id === id
-          ? { ...obj, status: !obj.status } // ← copie propre, modifiée
-          : obj                             // ← copie intacte
+        obj.id === id 
+          ? { ...obj, status: !obj.status } : obj    
       )
     );
   };
