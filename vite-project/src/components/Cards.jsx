@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Button from "./Button";
+
 
 // composant qui recupere  les infos limit et offset
 export default function Cards({ offset, limit }) {
@@ -85,7 +85,6 @@ export default function Cards({ offset, limit }) {
               <h2 className="m-2 inline-block  w-100 bg-blue-500 text-white rounded-xl">
                 {el.title}
               </h2>
-
               <p>{el.event_id}</p>
 
               {/* carte depliée ou pas */}
