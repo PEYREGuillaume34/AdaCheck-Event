@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 
-export default function SearchBar({ onSearch, placeholder = "Rechercher..." }) {
+export default function SearchBar({onSearch}) {
   // État local pour stocker ce que l’utilisateur tape
   const [value, setValue] = useState("");
 
   // À chaque fois que "value" change, on attend 400ms avant d’appeler onSearch
   useEffect(() => {
     const timeout = setTimeout(() => {
-      onSearch(value.trim()); // trim enlève les espaces au début/fin
+      onSearch(value.trim());
     }, 400);
 
     // Si l’utilisateur tape encore avant 400ms, on annule le précédent délai
@@ -21,7 +21,7 @@ export default function SearchBar({ onSearch, placeholder = "Rechercher..." }) {
         type="search"
         value={value}
         onChange={(e) => setValue(e.target.value)} // met à jour "value" à chaque frappe
-        placeholder={placeholder}
+        placeholder="Rechercher..."
         className="border rounded px-2 py-1 flex-1"
       />
     </div>

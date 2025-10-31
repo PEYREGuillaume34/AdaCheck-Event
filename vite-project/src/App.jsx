@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import Cards from "./components/Cards";
 import Button from "./components/Button";
-import SearchBar from "./components/SearchBar";
+import SearchBar from "./components/searchBar";
 
 function App() {
   const limit = 5; // cartes par page

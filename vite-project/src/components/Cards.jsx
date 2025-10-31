@@ -59,6 +59,7 @@ export default function Cards({ offset, limit, query = "", onCountChange }) {
 
     // ✅ notifier le parent du nombre total filtré
     if (onCountChange) onCountChange(results.length);
+    
   }, [allCards, query]);
 
   // 🔹 Pagination sur les résultats filtrés
