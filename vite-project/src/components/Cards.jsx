@@ -69,9 +69,8 @@ export default function Cards({ offset, limit, query = "", onCountChange }) {
   function toggle(id) {
     setStatesId(prev =>
       prev.map(obj =>
-        obj.id === id
-          ? { ...obj, status: !obj.status } // ← copie propre, modifiée
-          : obj                             // ← copie intacte
+        obj.id === id 
+          ? { ...obj, status: !obj.status } : obj    
       )
     );
   };
