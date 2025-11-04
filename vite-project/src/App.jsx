@@ -3,6 +3,8 @@ import "./App.css";
 import Cards from "./components/Cards";
 import Button from "./components/Button";
 import SearchBar from "./components/searchBar";
+import Favorites from "./components/Favorites";
+
 
 function App() {
   const limit = 5; // cartes par page
@@ -10,6 +12,7 @@ function App() {
   const [offset, setOffset] = useState(0);
   const [query, setQuery] = useState("");
   const [totalResults, setTotalResults] = useState(0); // ✅ nombre total de cartes après filtrage
+  // const [favorites, setFavorites] = useState([]);
 
   // pagination
   function goNextPage() {
@@ -30,6 +33,7 @@ function App() {
 
   return (
     <div className="p-4">
+
       {/* 🔍 Barre de recherche */}
       <SearchBar
         onSearch={(q) => {
@@ -38,7 +42,7 @@ function App() {
           setPage(1);
         }}
       />
-
+     
       {/* 💬 Affichage du nombre de résultats (si disponible) */}
       {totalResults > 0 && (
         <p className="text-gray-600 mb-2">
@@ -46,7 +50,7 @@ function App() {
           {totalResults > 1 ? "s" : ""}
         </p>
       )}
-
+      <Favorites></Favorites>
       {/* 🃏 Composant cartes */}
       {/* On passe une fonction pour récupérer le nombre total de résultats filtrés */}
       <Cards

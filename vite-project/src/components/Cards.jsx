@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Favorites } from "./Favorites";
 
 // composant qui recupere  les infos limit et offset
 export default function Cards({ offset, limit, query = "", onCountChange }) {
@@ -6,7 +7,7 @@ export default function Cards({ offset, limit, query = "", onCountChange }) {
   const [allCards, setAllCards] = useState([]); // toutes les cartes
   const [filteredCards, setFilteredCards] = useState([]); // après recherche
   const [statesId, setStatesId] = useState([]);
-  
+
 
   const noImg = "https://c.tenor.com/51xvC35-fDEAAAAd/tenor.gif";
 
@@ -59,7 +60,7 @@ export default function Cards({ offset, limit, query = "", onCountChange }) {
 
     // ✅ notifier le parent du nombre total filtré
     if (onCountChange) onCountChange(results.length);
-    
+
   }, [allCards, query]);
 
   // 🔹 Pagination sur les résultats filtrés
@@ -69,8 +70,8 @@ export default function Cards({ offset, limit, query = "", onCountChange }) {
   function toggle(id) {
     setStatesId(prev =>
       prev.map(obj =>
-        obj.id === id 
-          ? { ...obj, status: !obj.status } : obj    
+        obj.id === id
+          ? { ...obj, status: !obj.status } : obj
       )
     );
   };
@@ -85,18 +86,20 @@ export default function Cards({ offset, limit, query = "", onCountChange }) {
     return found ? found.status : false;
   }
 
- 
+
 
   // ... tant que la data n'est pas récupérée
   if (!allCards.length) return <div>Loading...</div>;
 
   return (
     <div>
+      <Favorites />
       {pagedCards.map((el) => (
         <div
           className="flex m-2 border rounded-xl gap-4 p-2 items-start"
           key={el.event_id}
         >
+          
           <img
             className="m-2 max-h-40 w-40 object-cover rounded-xl"
             src={el.cover_url || noImg}
@@ -111,7 +114,8 @@ export default function Cards({ offset, limit, query = "", onCountChange }) {
             {/* <p>{el.event_id}</p> */}
 
             {/* carte depliée ou pas */}
-            {returnState(el.event_id) ? <div dangerouslySetInnerHTML={{ __html: el.description }} ></div> : <p>{el.lead_text}</p>}
+            {returnState(el.event_id) ?
+              <div><p>{el.lead_text}</p><p>dangerouslySetInnerHTML={{ __html: el.description }} </p></div> : <p>{el.lead_text}</p>}
 
             <button className="m-5" onClick={() => toggle(el.event_id)}> {returnState(el.event_id) ? 'See Less' : 'See More'} </button>
 
@@ -123,7 +127,9 @@ export default function Cards({ offset, limit, query = "", onCountChange }) {
       ))}
 
       {pagedCards.length === 0 && (
-        <p className="text-center text-gray-500 mt-4">Aucun résultat trouvé.</p>
+        <div>
+          <p className="text-center text-gray-500 mt-4">Aucun résultat trouvé.</p>
+        </div>
       )}
     </div>
 
