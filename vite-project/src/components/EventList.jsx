@@ -1,0 +1,80 @@
+import { useState, useEffect } from "react";
+import Cards from "./Cards";
+
+export default function EventList({ offset, limit, query = "", onCountChange }) {
+  const [allCards, setAllCards] = useState([]);
+  const [filteredCards, setFilteredCards] = useState([]);
+  const [statesId, setStatesId] = useState([]);
+
+  // 🔹 Charger toutes les données une seule fois
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const response = await fetch(
+          "https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/que-faire-a-paris-/records?limit=90"
+        );
+        const data = await response.json();
+        setAllCards(data.results || []);
+      } catch (error) {
+        console.error("Erreur lors du chargement des données :", error);
+        setAllCards([]);
+      }
+    }
+    loadData();
+  }, []);
+
+  // 🔹 Créer le tableau des états pour chaque carte
+  useEffect(() => {
+    if (allCards.length) {
+      const allStates = allCards.map(el => ({ id: el.event_id, status: false }));
+      setStatesId(allStates);
+    }
+  }, [allCards]);
+
+  // 🔹 Filtrer selon la recherche
+  useEffect(() => {
+    let results = allCards;
+    if (query) {
+      const q = query.toLowerCase();
+      results = allCards.filter(
+        (el) =>
+          el.title?.toLowerCase().includes(q) ||
+          el.lead_text?.toLowerCase().includes(q)
+      );
+    }
+    setFilteredCards(results);
+    if (onCountChange) onCountChange(results.length);
+  }, [allCards, query, onCountChange]);
+
+  // 🔹 Pagination
+  const pagedCards = filteredCards.slice(offset, offset + limit);
+
+  // 🔹 Fonctions toggle et returnState
+  function toggle(id) {
+    setStatesId((prev) =>
+      prev.map((obj) =>
+        obj.id === id ? { ...obj, status: !obj.status } : obj
+      )
+    );
+  }
+
+  function returnState(id) {
+    const found = statesId.find((obj) => obj.id === id);
+    return found ? found.status : false;
+  }
+
+  // 🟡 ⚠️ Ici le problème se produit souvent :
+  // Il faut TOUJOURS que le composant retourne quelque chose, même en loading.
+  if (!allCards.length) {
+    return <div>Loading...</div>;
+  }
+
+  // ✅ On passe tout ce qu’il faut à Cards
+  return (
+    <Cards
+      EventList={pagedCards}
+      toggle={toggle}
+      returnState={returnState}
+    />
+  );
+}
