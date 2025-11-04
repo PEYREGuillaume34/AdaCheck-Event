@@ -6,7 +6,7 @@ export default function EventList({ offset, limit, query = "", onCountChange }) 
   const [filteredCards, setFilteredCards] = useState([]);
   const [statesId, setStatesId] = useState([]);
 
-  // 🔹 Charger toutes les données une seule fois
+ // au demarrage : fetch et setAllCards
   useEffect(() => {
     async function loadData() {
       try {
@@ -20,10 +20,10 @@ export default function EventList({ offset, limit, query = "", onCountChange }) 
         setAllCards([]);
       }
     }
-    loadData();
+    loadData(); 
   }, []);
 
-  // 🔹 Créer le tableau des états pour chaque carte
+  // tableau d'états par id
   useEffect(() => {
     if (allCards.length) {
       const allStates = allCards.map(el => ({ id: el.event_id, status: false }));
@@ -31,7 +31,7 @@ export default function EventList({ offset, limit, query = "", onCountChange }) 
     }
   }, [allCards]);
 
-  // 🔹 Filtrer selon la recherche
+  // Filtrer selon la recherche tapée
   useEffect(() => {
     let results = allCards;
     if (query) {
@@ -43,10 +43,11 @@ export default function EventList({ offset, limit, query = "", onCountChange }) 
       );
     }
     setFilteredCards(results);
+    // onCountChange = setTotalResults (nbr total d'events / de cards)
     if (onCountChange) onCountChange(results.length);
   }, [allCards, query, onCountChange]);
 
-  // 🔹 Pagination
+  // Pagination :  [ de premiere,  [...],  à dernière ]
   const pagedCards = filteredCards.slice(offset, offset + limit);
 
   // 🔹 Fonctions toggle et returnState
