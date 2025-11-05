@@ -3,6 +3,7 @@ import "./App.css";
 import EventList from "./components/EventList";
 import Button from "./components/Button";
 import SearchBar from "./components/SearchBar";
+import Filter from "./components/Filter";
 
 function App() {
   const limit = 6; // nombre d'event par page
@@ -10,6 +11,7 @@ function App() {
   const [offset, setOffset] = useState(0);  // nombre d'events "sautés" à l'affichage
   const [query, setQuery] = useState(""); // recherche value clavier
   const [totalResults, setTotalResults] = useState(0); // nombre d'events trouvés
+  const [filters, setFilters] = useState({}); // état des filtres appliqués
 
 
   // pour bouton next page
@@ -33,7 +35,7 @@ function App() {
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto font-sans bg-gray-50 min-h-screen">
     <h1 className="text-4xl font-extrabold text-gray-900 mb-8 border-b-4 border-blue-600 pb-2">
-        AdaCheck'Event ?
+        AdaCheck'Event
       </h1>
       <SearchBar
         onSearch={(q) => {
@@ -54,12 +56,21 @@ function App() {
         </p>
       )}
 
+       {/* ⚙️ Filtres */}
+      <Filter
+        filters={filters}
+        onChange={setFilters}
+      />
+      {console.log("Filtres appliqués dans App.jsx :", filters)}
+      
+
       {/* On appelle maintenant EventList */}
       <EventList
         offset={offset}
         limit={limit}
         query={query}
         onCountChange={setTotalResults}
+        filters={filters}
       />
 
       <div className="flex justify-center items-center space-x-8 mt-10 p-4 bg-white rounded-xl shadow-inner border border-gray-200">
