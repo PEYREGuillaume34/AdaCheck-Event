@@ -5,7 +5,7 @@ export default function Cards({ EventList, toggle, returnState }) {
   const noImg = "https://c.tenor.com/51xvC35-fDEAAAAd/tenor.gif";
 
   return (
-    <div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
       {EventList.map((event) => (
         <div
           className="relative flex m-2 border rounded-xl gap-4 p-2 items-start"
@@ -16,30 +16,28 @@ export default function Cards({ EventList, toggle, returnState }) {
           </div>
 
           <img
-            className="m-2 max-h-40 w-40 object-cover rounded-xl"
+            className="w-full h-40 object-cover mb-3 rounded-lg border border-gray-100"
             src={event.cover_url || noImg}
             alt={event.title}
           />
 
-          <div className="flex-1">
-            <h2 className="m-2 inline-block w-100 bg-blue-500 text-white rounded-xl px-2 py-1">
+          <div className="card-content">
+            <h3 className="font-bold text-xl text-gray-900 line-clamp-2">
               {event.title}
-            </h2>
+            </h3>
 
             {returnState(event.event_id) ? (
               <div>
-                <p>{event.lead_text}</p>
+                <p className="mt-2 text-gray-700 text-base line-clamp-3">{event.lead_text}</p>
                 <p dangerouslySetInnerHTML={{ __html: event.description }}></p>
               </div>
             ) : (
               <p>{event.lead_text}</p>
             )}
-            <div className="absolute bottom-1 right-2.5">
-              <Button className="m-10 border-solid" onClick={() => toggle(event.event_id)}>
-                {returnState(event.event_id) ? "See Less" : "See More"}
-              </Button>
-            </div>
 
+            <button className="m-5" onClick={() => toggle(event.event_id)}>
+              {returnState(event.event_id) ? "See Less" : "See More"}
+            </button>
           </div>
         </div>
       ))}
