@@ -79,8 +79,8 @@ export default function EventList({ offset, limit, query = "", onCountChange, fi
     }
   }, [filteredCards]);
 
-  // 🔹 Fonctions toggle et returnState
-  function toggle(id) {
+  // Fonctions toggle et returnState
+ function toggle(id) {
     setStatesId((prev) =>
       prev.map((obj) =>
         obj.id === id ? { ...obj, status: !obj.status } : obj
@@ -93,7 +93,6 @@ export default function EventList({ offset, limit, query = "", onCountChange, fi
     return found ? found.status : false;
   }
 
-  // 🟡 ⚠️ Ici le problème se produit souvent :
   // Il faut TOUJOURS que le composant retourne quelque chose, même en loading.
   if (!allCards.length) {
     return <div>Loading...</div>;

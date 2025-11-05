@@ -43,13 +43,13 @@ function App() {
           setOffset(0);
           setPage(1);
         }}
-        // on passe a search bar query en props 
-        // a chaque reactualisation de query tu actualise query 
-        // + tu reviens a page 1 avec un offset de 0 (normal pour une recherche)
+      // on passe a search bar query en props 
+      // a chaque reactualisation de query tu actualise query 
+      // + tu reviens a page 1 avec un offset de 0 (normal pour une recherche)
       />
 
 
-    {/* ici petite balise pour indiquer le nombre d'evenements trouvés*/}
+      {/* ici petite balise pour indiquer le nombre d'evenements trouvés*/}
       {totalResults > 0 && (
         <p className="text-lg text-gray-700 mb-4 font-medium">
           <span className="font-bold text-blue-600">{totalResults}</span> événement{totalResults > 1 ? 's' : ''} trouvé{totalResults > 1 ? 's' : ''}.
