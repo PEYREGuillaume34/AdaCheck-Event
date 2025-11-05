@@ -5,14 +5,14 @@ export default function EventList({ offset, limit, query = "", onCountChange }) 
   const [allCards, setAllCards] = useState([]);
   const [filteredCards, setFilteredCards] = useState([]);
   const [statesId, setStatesId] = useState([]);
-  // const [favorite, setFavorite] = useState([]);
+  const [favorite, setFavorite] = useState([]);
 
  // au demarrage : fetch et setAllCards
   useEffect(() => {
     async function loadData() {
       try {
         const response = await fetch(
-          "https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/que-faire-a-paris-/records?limit=90"
+          "https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/que-faire-a-paris-/records?limit=100"
         );
         const data = await response.json();
         setAllCards(data.results || []);

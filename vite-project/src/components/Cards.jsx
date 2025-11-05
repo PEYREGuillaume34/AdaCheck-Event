@@ -8,12 +8,9 @@ export default function Cards({ EventList, toggle, returnState }) {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
       {EventList.map((event) => (
         <div
-          className="relative flex m-2 border rounded-xl gap-4 p-2 items-start"
+          className="card "
           key={event.event_id}>
-
-          <div className="absolute top-2 right-2.5">
-            <Button> 🙂 </Button>
-          </div>
+         
 
           <img
             className="w-full h-40 object-cover mb-3 rounded-lg border border-gray-100"
@@ -35,7 +32,7 @@ export default function Cards({ EventList, toggle, returnState }) {
               <p>{event.lead_text}</p>
             )}
 
-            <button className="m-5" onClick={() => toggle(event.event_id)}>
+            <button className="text-xl text-center p-8 text-blue-600" onClick={() => toggle(event.event_id)}>
               {returnState(event.event_id) ? "See Less" : "See More"}
             </button>
           </div>
