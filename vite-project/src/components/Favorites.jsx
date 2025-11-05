@@ -1,8 +1,9 @@
+import Button from "./Button";
 
- 
- export default function Favorites() {
+export default function Favorites() {
 
- return  <div> 🙂 </div>
-     
- }
- 
+    
+
+    return <Button>🙂</Button>
+
+}

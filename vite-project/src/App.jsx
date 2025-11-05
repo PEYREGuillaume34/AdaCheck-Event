@@ -38,13 +38,13 @@ function App() {
           setOffset(0);
           setPage(1);
         }}
-        // on passe a search bar query en props 
-        // a chaque reactualisation de query tu actualise query 
-        // + tu reviens a page 1 avec un offset de 0 (normal pour une recherche)
+      // on passe a search bar query en props 
+      // a chaque reactualisation de query tu actualise query 
+      // + tu reviens a page 1 avec un offset de 0 (normal pour une recherche)
       />
 
 
-    {/* ici petite balise pour indiquer le nombre d'evenements trouvés*/}
+      {/* ici petite balise pour indiquer le nombre d'evenements trouvés*/}
       {totalResults > 0 && (
         <p className="text-gray-600 mb-2">
           {totalResults} évènement{totalResults > 1 ? "s" : ""} trouvé
@@ -63,11 +63,10 @@ function App() {
         <Button onClick={goPrevPage} disabled={page === 1}>
           Prev
         </Button>
+
         <p>{page}</p>
-        <Button
-          onClick={goNextPage}
-          disabled={offset + limit >= totalResults}
-        >
+
+        <Button onClick={goNextPage} disabled={offset + limit >= totalResults}>
           Next
         </Button>
       </div>

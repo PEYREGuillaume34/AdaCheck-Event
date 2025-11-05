@@ -5,6 +5,7 @@ export default function EventList({ offset, limit, query = "", onCountChange }) 
   const [allCards, setAllCards] = useState([]);
   const [filteredCards, setFilteredCards] = useState([]);
   const [statesId, setStatesId] = useState([]);
+  // const [favorite, setFavorite] = useState([]);
 
  // au demarrage : fetch et setAllCards
   useEffect(() => {
@@ -50,8 +51,8 @@ export default function EventList({ offset, limit, query = "", onCountChange }) 
   // Pagination :  [ de premiere,  [...],  à dernière ]
   const pagedCards = filteredCards.slice(offset, offset + limit);
 
-  // 🔹 Fonctions toggle et returnState
-  function toggle(id) {
+  // Fonctions toggle et returnState
+ function toggle(id) {
     setStatesId((prev) =>
       prev.map((obj) =>
         obj.id === id ? { ...obj, status: !obj.status } : obj
@@ -64,7 +65,6 @@ export default function EventList({ offset, limit, query = "", onCountChange }) 
     return found ? found.status : false;
   }
 
-  // 🟡 ⚠️ Ici le problème se produit souvent :
   // Il faut TOUJOURS que le composant retourne quelque chose, même en loading.
   if (!allCards.length) {
     return <div>Loading...</div>;
