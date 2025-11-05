@@ -3,7 +3,7 @@ import Cards from "./Cards";
 
 export default function EventList({ offset, limit, query = "", onCountChange, filters = {} }) {
   const [allCards, setAllCards] = useState([]);
-  const [filteredCards, setFilteredCards] = useState([]);
+  const [seeMore, setseeMore] = useState([]);
   const [statesId, setStatesId] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
 
@@ -42,7 +42,7 @@ export default function EventList({ offset, limit, query = "", onCountChange, fi
         }
 
         const response = await fetch(
-          "https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/que-faire-a-paris-/records?limit=90"
+          `https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/que-faire-a-paris-/records?${params}`
         );
         const data = await response.json();
         setAllCards(data.results || []);
@@ -67,17 +67,17 @@ export default function EventList({ offset, limit, query = "", onCountChange, fi
           el.lead_text?.toLowerCase().includes(q)
       );
     }
-     setFilteredCards(results);
+     setseeMore(results);
     if (onCountChange) onCountChange(totalCount);
   }, [allCards, query, onCountChange, totalCount]);
 
-  // tableau d'états par id
+  // tableau d'états par id pour btn seeMore / seeLess
   useEffect(() => {
-    if (filteredCards.length) {
-      const allStates = filteredCards.map(el => ({ id: el.event_id, status: false }));
+    if (seeMore.length) {
+      const allStates = seeMore.map(el => ({ id: el.event_id, status: false }));
       setStatesId(allStates);
     }
-  }, [filteredCards]);
+  }, [seeMore]);
 
   // Fonctions toggle et returnState
  function toggle(id) {
@@ -97,14 +97,14 @@ export default function EventList({ offset, limit, query = "", onCountChange, fi
   if (!allCards.length) {
     return <div>Loading...</div>;
   }
-  if (!filteredCards.length) {
+  if (!seeMore.length) {
     return <div>Aucun événement trouvé.</div>;
   }
 
   // ✅ On passe tout ce qu’il faut à Cards
   return (
     <Cards
-      EventList={filteredCards}
+      EventList={seeMore}
       toggle={toggle}
       returnState={returnState}
     />

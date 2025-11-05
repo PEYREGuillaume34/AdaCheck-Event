@@ -1,5 +1,4 @@
-import Favorites from "./Favorites";
-import Button from "./Button";
+import Favorites from "./Favorites";import Button from "./Button";
 
 export default function Cards({ EventList, toggle, returnState }) {
   const noImg = "https://c.tenor.com/51xvC35-fDEAAAAd/tenor.gif";
@@ -8,10 +7,8 @@ export default function Cards({ EventList, toggle, returnState }) {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
       {EventList.map((event) => (
         <div
-          className="card"
+          className="card relative"
           key={event.event_id}>
-
-
 
           <img
             className="w-full h-40 object-cover mb-3 rounded-lg border border-gray-100"
@@ -20,9 +17,9 @@ export default function Cards({ EventList, toggle, returnState }) {
           />
 
           <div className="card-content">
-            <h3 className="font-bold text-xl text-gray-900 line-clamp-2">
+            <h2 className="font-bold text-xl text-gray-900 line-clamp-2">
               {event.title}
-            </h3>
+            </h2>
 
             {returnState(event.event_id) ? (
               <div>
@@ -36,6 +33,10 @@ export default function Cards({ EventList, toggle, returnState }) {
             <button className="text-xl text-center p-8 text-blue-600" onClick={() => toggle(event.event_id)}>
               {returnState(event.event_id) ? "See Less" : "See More"}
             </button>
+            <div className="absolute top-1 right-1">
+              <Button> 🙂 </Button>
+            </div>
+
           </div>
         </div>
       ))}
