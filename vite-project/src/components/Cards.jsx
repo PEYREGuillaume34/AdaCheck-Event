@@ -1,6 +1,6 @@
 import Favorites from "./Favorites";import Button from "./Button";
 
-export default function Cards({ EventList, toggle, returnState }) {
+export default function Cards({ EventList, toggle, returnState, toggleFav, returnStateFav }) {
   const noImg = "https://c.tenor.com/51xvC35-fDEAAAAd/tenor.gif";
 
   return (
@@ -33,8 +33,11 @@ export default function Cards({ EventList, toggle, returnState }) {
             <button className="text-xl text-center p-8 text-blue-600" onClick={() => toggle(event.event_id)}>
               {returnState(event.event_id) ? "See Less" : "See More"}
             </button>
-            <div className="absolute top-1 right-1">
-              <Button> 🙂 </Button>
+            <div className="absolute bottom-1 right-1">
+              <Button onClick={()=> {
+                {console.log("id", event.event_id)}
+    
+                {toggleFav(event.event_id)}} }> {returnStateFav(event.event_id)? "🙂" : "🤍" } </Button>
             </div>
 
           </div>

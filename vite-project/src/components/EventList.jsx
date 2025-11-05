@@ -3,9 +3,10 @@ import Cards from "./Cards";
 
 export default function EventList({ offset, limit, query = "", onCountChange, filters = {} }) {
   const [allCards, setAllCards] = useState([]);
-  const [seeMore, setseeMore] = useState([]);
+  const [filteredCards, setFilteredCards] = useState([]);
   const [statesId, setStatesId] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [fav, setFav] = useState([]);
 
   // au demarrage : fetch et setAllCards
   useEffect(() => {
@@ -67,46 +68,73 @@ export default function EventList({ offset, limit, query = "", onCountChange, fi
           el.lead_text?.toLowerCase().includes(q)
       );
     }
-     setseeMore(results);
+    setFilteredCards(results);
     if (onCountChange) onCountChange(totalCount);
   }, [allCards, query, onCountChange, totalCount]);
 
-  // tableau d'états par id pour btn seeMore / seeLess
+  // creation du tableau d'états par id pour see more
   useEffect(() => {
-    if (seeMore.length) {
-      const allStates = seeMore.map(el => ({ id: el.event_id, status: false }));
+    if (filteredCards.length) {
+      const allStates = filteredCards.map(el => ({ id: el.event_id, status: false }));
       setStatesId(allStates);
     }
-  }, [seeMore]);
+  }, [filteredCards]);
 
-  // Fonctions toggle et returnState
- function toggle(id) {
-    setStatesId((prev) =>
-      prev.map((obj) =>
-        obj.id === id ? { ...obj, status: !obj.status } : obj
+  // creation du tableau d'états par id pour favoris
+  useEffect(() => {
+    if (filteredCards.length) {
+      const favStates = filteredCards.map(el => ({ id: el.event_id, status: false }));
+      setFav(favStates);
+    }
+  }, [filteredCards]);
+
+  // Fonctions toggle à l'id selectionnée a partir du tableau d'etats seemore
+  function toggle(id) {
+    setStatesId((prev) => // on map sur stastesId en parametre un met prev (autremet dit un tableau)
+      prev.map((obj) => // à chaque objet de ce tableau 
+        obj.id === id ? { ...obj, status: !obj.status } : obj // onv conserve l'element on change juste la valeur de "status:" par l'inverse
       )
     );
   }
+  
+  // Fonction qui retourne un etat seemore
+     function returnState(id) {
+       const found = statesId.find((obj) => obj.id === id);
+       return found ? found.status : false;
+     }
 
-  function returnState(id) {
-    const found = statesId.find((obj) => obj.id === id);
-    return found ? found.status : false;
+  // Fonctions toggle à l'id selectionnée a partir du tableau d'etats fav
+  function toggleFav(id) {
+    setFav((prev) => // on map sur stastesId en parametre un met prev (autremet dit un tableau)
+      prev.map((favoris) => // à chaque favoris de ce tableau 
+        favoris.id === id ? { ...favoris, status: !favoris.status } : favoris // onv conserve l'element on change juste la valeur de "status:" par l'inverse
+      )
+    );
   }
+    // Fonction qui retourne un etat seemore
+     function returnStateFav(id) {
+       const found = fav.find((obj) => obj.id === id);
+       return found ? found.status : false;
+     }
 
-  // Il faut TOUJOURS que le composant retourne quelque chose, même en loading.
-  if (!allCards.length) {
-    return <div>Loading...</div>;
-  }
-  if (!seeMore.length) {
-    return <div>Aucun événement trouvé.</div>;
-  }
 
-  // ✅ On passe tout ce qu’il faut à Cards
-  return (
-    <Cards
-      EventList={seeMore}
-      toggle={toggle}
-      returnState={returnState}
-    />
-  );
-}
+
+    // Il faut TOUJOURS que le composant retourne quelque chose, même en loading.
+    if (!allCards.length) {
+      return <div>Loading...</div>;
+    }
+    if (!filteredCards.length) {
+      return <div>Aucun événement trouvé.</div>;
+    }
+
+    // ✅ On passe tout ce qu’il faut à Cards
+    return (
+      <Cards
+        EventList={filteredCards}
+        toggle={toggle}
+        returnState={returnState}
+        toggleFav={toggleFav}
+        returnStateFav={returnStateFav}
+      />
+    );
+  }
