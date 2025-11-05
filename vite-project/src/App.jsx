@@ -3,6 +3,7 @@ import "./App.css";
 import EventList from "./components/EventList";
 import Button from "./components/Button";
 import SearchBar from "./components/SearchBar";
+import Filter from "./components/Filter";
 
 function App() {
   const limit = 6; // nombre d'event par page
@@ -10,6 +11,7 @@ function App() {
   const [offset, setOffset] = useState(0);  // nombre d'events "sautés" à l'affichage
   const [query, setQuery] = useState(""); // recherche value clavier
   const [totalResults, setTotalResults] = useState(0); // nombre d'events trouvés
+  const [filters, setFilters] = useState({}); // état des filtres appliqués
 
 
   // pour bouton next page
@@ -54,12 +56,21 @@ function App() {
         </p>
       )}
 
+       {/* ⚙️ Filtres */}
+      <Filter
+        filters={filters}
+        onChange={setFilters}
+      />
+      {console.log("Filtres appliqués dans App.jsx :", filters)}
+      
+
       {/* On appelle maintenant EventList */}
       <EventList
         offset={offset}
         limit={limit}
         query={query}
         onCountChange={setTotalResults}
+        filters={filters}
       />
 
       <div className="flex justify-center items-center space-x-8 mt-10 p-4 bg-white rounded-xl shadow-inner border border-gray-200">
