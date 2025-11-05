@@ -31,7 +31,7 @@ export default function Cards({ EventList, toggle, returnState }) {
               <p>{event.lead_text}</p>
             )}
 
-            <button className="m-5" onClick={() => toggle(event.event_id)}>
+            <button className="text-xl text-center p-8 text-blue-600" onClick={() => toggle(event.event_id)}>
               {returnState(event.event_id) ? "See Less" : "See More"}
             </button>
           </div>

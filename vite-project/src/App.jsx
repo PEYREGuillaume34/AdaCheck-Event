@@ -35,7 +35,7 @@ function App() {
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto font-sans bg-gray-50 min-h-screen">
     <h1 className="text-4xl font-extrabold text-gray-900 mb-8 border-b-4 border-blue-600 pb-2">
-        AdaCheck'Event ?
+        AdaCheck'Event
       </h1>
       <SearchBar
         onSearch={(q) => {
