@@ -11,9 +11,7 @@ export default function Cards({ EventList, toggle, returnState }) {
           className="card"
           key={event.event_id}>
 
-          <div className="absolute top-2 right-2.5">
-            <Button> 🙂 </Button>
-          </div>
+
 
           <img
             className="w-full h-40 object-cover mb-3 rounded-lg border border-gray-100"
