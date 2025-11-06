@@ -61,7 +61,7 @@ function App() {
         filters={filters}
         onChange={setFilters}
       />
-      {console.log("Filtres appliqués dans App.jsx :", filters)}
+      {/* {console.log("Filtres appliqués dans App.jsx :", filters)} */}
       
 
       {/* On appelle maintenant EventList */}

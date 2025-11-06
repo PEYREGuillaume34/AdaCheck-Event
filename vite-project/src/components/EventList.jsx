@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import Cards from "./Cards";
 
 export default function EventList({ offset, limit, query = "", onCountChange, filters = {} }) {
-  const [allCards, setAllCards] = useState([]);
-  const [filteredCards, setFilteredCards] = useState([]);
-  const [statesId, setStatesId] = useState([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [fav, setFav] = useState([]);
+  const [allCards, setAllCards] = useState([]); //recuperation data
+  const [filteredCards, setFilteredCards] = useState([]);// data transformée une fois frappe filtre ou prev ou next
+  const [statesId, setStatesId] = useState([]); // c'est le tableau d'etats pour toggle seeMore seeLess
+  const [totalCount, setTotalCount] = useState(0); // total d'events renvoyés par API
+  const [fav, setFav] = useState([]); // c'est le tableau d'etats pour toggle Favoris
+
+
 
   // au demarrage : fetch et setAllCards
   useEffect(() => {
@@ -20,23 +22,23 @@ export default function EventList({ offset, limit, query = "", onCountChange, fi
         params.set("limit", String(limit));
         params.set("offset", String(offset));
 
-        // Recherche côté API (sensible à la casse)
+        // query trouvée ds dans API 
         if (query) {
           params.set("where", `'%${query}%'`);
         }
 
         // Ajout des filtres
-        const whereConditions = [];
-        if (filters.price_type) {
+        const whereConditions = []; //tableau vide pour construire parametres
+        if (filters.price_type) { // si il existe on ajoute le filtre ou par def
           whereConditions.push(`price_type='${filters.price_type}'`);
         }
-        if (filters.acces_type) {
+        if (filters.acces_type) { // pareil
           whereConditions.push(`access_type='${filters.acces_type}'`);
         }
-        if (whereConditions.length > 0) {
-          const existingWhere = params.get("where");
-          const filterWhere = whereConditions.join(" and ");
-          params.set("where", existingWhere
+        if (whereConditions.length > 0) { // si filtres enregistré ou par def
+          const existingWhere = params.get("where"); // recupere query
+          const filterWhere = whereConditions.join(" and "); // association des filtres
+          params.set("where", existingWhere 
             ? `(${existingWhere}) and (${filterWhere})`
             : filterWhere
           );
@@ -48,6 +50,9 @@ export default function EventList({ offset, limit, query = "", onCountChange, fi
         const data = await response.json();
         setAllCards(data.results || []);
         setTotalCount(data.total_count || (data.results ? data.results.length : 0));
+
+
+
       } catch (error) {
         console.error("Erreur lors du chargement des données :", error);
         setAllCards([]);
@@ -59,7 +64,9 @@ export default function EventList({ offset, limit, query = "", onCountChange, fi
 
   // Filtrage insensible à la casse côté client
   useEffect(() => {
+
     let results = allCards;
+
     if (query) {
       const q = query.toLowerCase();
       results = allCards.filter(
@@ -69,7 +76,7 @@ export default function EventList({ offset, limit, query = "", onCountChange, fi
       );
     }
     setFilteredCards(results);
-    if (onCountChange) onCountChange(totalCount);
+    if (onCountChange) onCountChange(totalCount); //  mise a jour du nbr total de nouveaux resultats
   }, [allCards, query, onCountChange, totalCount]);
 
   // creation du tableau d'états par id pour see more
@@ -77,14 +84,6 @@ export default function EventList({ offset, limit, query = "", onCountChange, fi
     if (filteredCards.length) {
       const allStates = filteredCards.map(el => ({ id: el.event_id, status: false }));
       setStatesId(allStates);
-    }
-  }, [filteredCards]);
-
-  // creation du tableau d'états par id pour favoris
-  useEffect(() => {
-    if (filteredCards.length) {
-      const favStates = filteredCards.map(el => ({ id: el.event_id, status: false }));
-      setFav(favStates);
     }
   }, [filteredCards]);
 
@@ -96,45 +95,74 @@ export default function EventList({ offset, limit, query = "", onCountChange, fi
       )
     );
   }
-  
-  // Fonction qui retourne un etat seemore
-     function returnState(id) {
-       const found = statesId.find((obj) => obj.id === id);
-       return found ? found.status : false;
-     }
-
-  // Fonctions toggle à l'id selectionnée a partir du tableau d'etats fav
-  function toggleFav(id) {
-    setFav((prev) => // on map sur stastesId en parametre un met prev (autremet dit un tableau)
-      prev.map((favoris) => // à chaque favoris de ce tableau 
-        favoris.id === id ? { ...favoris, status: !favoris.status } : favoris // onv conserve l'element on change juste la valeur de "status:" par l'inverse
-      )
-    );
+  // Fonction qui retourne un etat seemore (pour affichage texte)
+  function returnState(id) {
+    const found = statesId.find((obj) => obj.id === id);
+    return found ? found.status : false;
   }
-    // Fonction qui retourne un etat seemore
-     function returnStateFav(id) {
-       const found = fav.find((obj) => obj.id === id);
-       return found ? found.status : false;
-     }
 
 
+  // creation du tableau d'états par id pour favoris
+  useEffect(() => {
+    //recupere le localStorage
+    const storage = JSON.parse(localStorage.getItem("fav")) || [];
 
-    // Il faut TOUJOURS que le composant retourne quelque chose, même en loading.
-    if (!allCards.length) {
-      return <div>Loading...</div>;
+    // si il y a de la data
+    if (filteredCards.length) {
+      // crée un tableau d'etat favStates que tu remplis 
+      const favStates = filteredCards.map(el => {
+        // tu check les id correspondantes entre favstates et localstorage tu renvoie l'element entier si match id
+        const match = storage.find(fav => fav.id === el.event_id);
+        // console.log("match", match)
+
+        // des que tu as un match tu le renvoie tel quel sinon tu renvoies un objet avec un id celui de l'event et une value : false
+        return match ? match : { id: el.event_id, status: false };
+      });
+      // console.log("localStorage", localStorage)
+
+      // tu actualise fav
+      setFav(favStates);
     }
-    if (!filteredCards.length) {
-      return <div>Aucun événement trouvé.</div>;
-    }
+  }, [filteredCards]);
 
-    // ✅ On passe tout ce qu’il faut à Cards
-    return (
-      <Cards
-        EventList={filteredCards}
-        toggle={toggle}
-        returnState={returnState}
-        toggleFav={toggleFav}
-        returnStateFav={returnStateFav}
-      />
-    );
+
+  // Fonctions toggle à l'id selectionnée
+  function toggleFav(id) { //tu actualises fav
+    setFav((prev) => {// on map sur fav en parametre un met prev (autrement dit une copie de tableau)
+      const updated = prev.map((el) => // si id de l'event correspond a un id ds fav
+        el.id === id ? { ...el, status: !el.status } : el //tu reconstruit l'objet avec un status inversé // sinon 
+      );
+      //enfin tu re actualise localStorage
+      localStorage.setItem("fav", JSON.stringify(updated)); //tu renvoies ce tableau qui est un update des states
+      //on modifie fav en retournant le nouveau tableau dans setFav
+      return updated;
+    });
   }
+
+  // Fonction qui retourne un etat fav (pour affichage emoticone)
+  function returnStateFav(id) {
+    const found = fav.find((obj) => obj.id === id);
+    return found ? found.status : false;
+  }
+
+
+
+  // Il faut TOUJOURS que le composant retourne quelque chose, même en loading sinon crash affichage
+  if (!allCards.length) {
+    return <div>Loading...</div>;
+  }
+  if (!filteredCards.length) {
+    return <div>Aucun événement trouvé.</div>;
+  }
+
+  // ✅ On passe tout ce qu’il faut à Cards
+  return (
+    <Cards
+      EventList={filteredCards}
+      toggle={toggle}
+      returnState={returnState}
+      toggleFav={toggleFav}
+      returnStateFav={returnStateFav}
+    />
+  );
+}

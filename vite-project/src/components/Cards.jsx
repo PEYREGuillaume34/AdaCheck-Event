@@ -35,9 +35,10 @@ export default function Cards({ EventList, toggle, returnState, toggleFav, retur
             </button>
             <div className="absolute bottom-1 right-1">
               <Button onClick={()=> {
-                {console.log("id", event.event_id)}
+                // {console.log("id", event.event_id)}
+                {toggleFav(event.event_id)}} }> 
     
-                {toggleFav(event.event_id)}} }> {returnStateFav(event.event_id)? "🙂" : "🤍" } </Button>
+                {returnStateFav(event.event_id)? "🙂" : "🤍" } </Button>
             </div>
 
           </div>
